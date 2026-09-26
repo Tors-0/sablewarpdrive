@@ -1,0 +1,6 @@
+{
+  "variants" : {
+    "activated=false": { "model": "aerowarpdrive:block/warp_anchor" },
+    "activated=true": { "model": "aerowarpdrive:block/warp_anchor_activated" }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "itemGroup.aerowarpdrive": "Sable: Warp Drive",
+
+  "string.aerowarpdrive.destinations": " Warp Destinations",
+
+  "block.aerowarpdrive.warp_drive": "Warp Drive Core",
+  "block.aerowarpdrive.warp_anchor": "Rift Anchor",
+
+  "item.aerowarpdrive.warp_drive": "Warp Drive Core",
+  "item.aerowarpdrive.warp_anchor": "Rift Anchor",
+  "item.aerowarpdrive.untethered_fruit": "Untethered Fruit",
+
+  "aerowarpdrive.configuration.title": "Sable: Warp Drive Configs",
+  "aerowarpdrive.configuration.section.aerowarpdrive.common.toml": "Sable: Warp Drive Configs",
+  "aerowarpdrive.configuration.section.aerowarpdrive.common.toml.title": "Sable: Warp Drive Configs",
+  "aerowarpdrive.configuration.items": "Item List",
+  "aerowarpdrive.configuration.logDirtBlock": "Log Dirt Block",
+  "aerowarpdrive.configuration.magicNumberIntroduction": "Magic Number Text",
+  "aerowarpdrive.configuration.magicNumber": "Magic Number"
+}
