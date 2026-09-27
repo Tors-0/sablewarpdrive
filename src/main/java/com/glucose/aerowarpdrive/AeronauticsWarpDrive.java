@@ -7,11 +7,12 @@ import com.glucose.aerowarpdrive.blockentity.WarpDriveBlockEntity;
 import com.glucose.aerowarpdrive.core.WarpAnchor;
 import com.glucose.aerowarpdrive.network.AWDEndecs;
 import com.glucose.aerowarpdrive.network.AnchorListPacket;
-import com.glucose.aerowarpdrive.network.WarpDrivePacket;
+import com.glucose.aerowarpdrive.network.WarpDriveTargetPacket;
 import com.glucose.aerowarpdrive.store.SavedAnchorsDataStore;
 import io.wispforest.owo.network.OwoNetChannel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.slf4j.Logger;
 
@@ -140,8 +141,10 @@ public class AeronauticsWarpDrive {
             builder.register(AWDEndecs.WARP_ANCHOR_ENDEC, WarpAnchor.class);
         });
         ANCHORS_LIST_SEND_CHANNEL.registerClientboundDeferred(AnchorListPacket.class);
-        WARP_DRIVE_SELECT_CHANNEL.registerServerbound(WarpDrivePacket.class, ((message, access) -> {
+        WARP_DRIVE_SELECT_CHANNEL.registerServerbound(WarpDriveTargetPacket.class, ((message, access) -> {
             WarpAnchor anchor = SavedAnchorsDataStore.getDimensionAnchorStore(access.player().serverLevel()).getAnchorByUid(message.anchorId()).get();
+            BlockEntity entity = access.player().serverLevel().getBlockEntity(message.pos());
+
             System.out.println(anchor.getName());
         }));
 

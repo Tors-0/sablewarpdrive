@@ -2,13 +2,14 @@ package com.glucose.aerowarpdrive.gui;
 
 import com.glucose.aerowarpdrive.AeronauticsWarpDrive;
 import com.glucose.aerowarpdrive.core.WarpAnchor;
-import com.glucose.aerowarpdrive.network.WarpDrivePacket;
+import com.glucose.aerowarpdrive.network.WarpDriveTargetPacket;
 import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -19,9 +20,11 @@ import java.util.Objects;
 
 public class WarpDriveScreen extends BaseOwoScreen<FlowLayout> {
     private final List<WarpAnchor> anchors;
+    private final BlockPos pos;
 
-    public WarpDriveScreen(List<WarpAnchor> anchors) {
+    public WarpDriveScreen(List<WarpAnchor> anchors, BlockPos pos) {
         this.anchors = anchors;
+        this.pos = pos;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class WarpDriveScreen extends BaseOwoScreen<FlowLayout> {
                     Components.button(
                             Component.literal(anchor.getSummary(player)),
                             buttonComponent -> {
-                                AeronauticsWarpDrive.WARP_DRIVE_SELECT_CHANNEL.clientHandle().send(new WarpDrivePacket(anchor.getUId()));
+                                AeronauticsWarpDrive.WARP_DRIVE_SELECT_CHANNEL.clientHandle().send(new WarpDriveTargetPacket(anchor.getUId(), pos));
                                 getMinecraft().setScreen(null);
                             })
             );
