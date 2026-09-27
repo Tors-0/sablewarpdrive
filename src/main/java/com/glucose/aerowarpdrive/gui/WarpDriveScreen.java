@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,10 +22,12 @@ import java.util.Objects;
 public class WarpDriveScreen extends BaseOwoScreen<FlowLayout> {
     private final List<WarpAnchor> anchors;
     private final BlockPos pos;
+    private final String message;
 
-    public WarpDriveScreen(List<WarpAnchor> anchors, BlockPos pos) {
+    public WarpDriveScreen(List<WarpAnchor> anchors, BlockPos pos, String message) {
         this.anchors = anchors;
         this.pos = pos;
+        this.message = message;
     }
 
     @Override
@@ -38,15 +41,19 @@ public class WarpDriveScreen extends BaseOwoScreen<FlowLayout> {
         Player player = Objects.requireNonNull(getMinecraft().player);
         Component dimension = player.level().getDescription().copy()
                 .append(Component.translatable("string.aerowarpdrive.destinations"));
-        for (WarpAnchor anchor : anchors) {
-            layout.child(
-                    Components.button(
-                            Component.literal(anchor.getSummary(player)),
-                            buttonComponent -> {
-                                AeronauticsWarpDrive.WARP_DRIVE_SELECT_CHANNEL.clientHandle().send(new WarpDriveTargetPacket(anchor.getUId(), pos));
-                                getMinecraft().setScreen(null);
-                            })
-            );
+        if (!anchors.isEmpty()) {
+            for (WarpAnchor anchor : anchors) {
+                layout.child(
+                        Components.button(
+                                Component.literal(anchor.getSummary(player)),
+                                buttonComponent -> {
+                                    AeronauticsWarpDrive.WARP_DRIVE_SELECT_CHANNEL.clientHandle().send(new WarpDriveTargetPacket(anchor.getUId(), pos));
+                                    getMinecraft().setScreen(null);
+                                })
+                );
+            }
+        } else {
+            layout.child(Components.label(Component.literal(message)).maxWidth(180));
         }
         layout
                 .gap(2)

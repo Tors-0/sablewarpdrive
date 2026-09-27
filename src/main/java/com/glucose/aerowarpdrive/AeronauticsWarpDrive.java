@@ -144,7 +144,9 @@ public class AeronauticsWarpDrive {
         WARP_DRIVE_SELECT_CHANNEL.registerServerbound(WarpDriveTargetPacket.class, ((message, access) -> {
             WarpAnchor anchor = SavedAnchorsDataStore.getDimensionAnchorStore(access.player().serverLevel()).getAnchorByUid(message.anchorId()).get();
             BlockEntity entity = access.player().serverLevel().getBlockEntity(message.pos());
-
+            if (entity instanceof WarpDriveBlockEntity warpDrive) {
+                warpDrive.beginCharge(anchor);
+            }
             System.out.println(anchor.getName());
         }));
 

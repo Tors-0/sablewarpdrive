@@ -29,7 +29,7 @@ public class AeronauticsWarpDriveClient {
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
         ANCHORS_LIST_SEND_CHANNEL.registerClientbound(AnchorListPacket.class, ((message, access) -> {
-            access.runtime().setScreen(new WarpDriveScreen(message.anchors(), message.pos()));
+            access.runtime().setScreen(new WarpDriveScreen(message.anchors(), message.pos(), message.message()));
         }));
 
         // Some client setup code
