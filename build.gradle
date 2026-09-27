@@ -28,17 +28,32 @@ sourceSets.main.resources {
 
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
+    // sable companion + sable
     exclusiveContent {
         forRepository {
             maven { url = "https://maven.ryanhcode.dev/releases" }
         }
         filter {
             includeGroup("dev.ryanhcode.sable-companion")
+            includeGroup("dev.ryanhcode.sable")
         }
     }
+    // veil (for sable)
+    maven { // For Veil
+        name = 'BlameJared Maven (CrT / Bookshelf)'
+        url = 'https://maven.blamejared.com'
+    }
+    // forge config api port (for sable)
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
+
 
     // jade (dev only)
     maven { url = "https://api.modrinth.com/maven" }
+
+
     // owo-lib
     maven { url = "https://maven.wispforest.io" }
     maven { url = "https://jitpack.io" }
@@ -145,6 +160,7 @@ dependencies {
             prefer(project.sable_companion_version)
         }
     }
+    api("dev.ryanhcode.sable:sable-common-${project.minecraft_version}:${project.sable_version}")
 
     implementation "io.wispforest:owo-lib-neoforge:${project.owo_version}"
     accessTransformers "io.wispforest:owo-lib-neoforge:${project.owo_version}"
