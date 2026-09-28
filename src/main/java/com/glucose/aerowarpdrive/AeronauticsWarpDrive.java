@@ -68,7 +68,7 @@ public class AeronauticsWarpDrive {
     // Block
     public static final DeferredBlock<WarpDriveBlock> WARP_DRIVE = BLOCKS.register(
             "warp_drive",
-            () -> new WarpDriveBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_MAGENTA).destroyTime(5f).noOcclusion())
+            () -> new WarpDriveBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).destroyTime(5f).noOcclusion())
     );
     public static final DeferredBlock<WarpAnchorBlock> WARP_ANCHOR = BLOCKS.register(
             "warp_anchor",
