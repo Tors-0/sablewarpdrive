@@ -2,14 +2,11 @@ package com.glucose.aerowarpdrive.blockentity;
 
 import com.glucose.aerowarpdrive.block.WarpDriveBlock;
 import com.glucose.aerowarpdrive.core.WarpAnchor;
-import com.glucose.aerowarpdrive.core.WarpDriveStates;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.api.physics.PhysicsPipeline;
-import dev.ryanhcode.sable.api.physics.PhysicsPipelineBody;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
-import dev.ryanhcode.sable.command.data_accessor.SubLevelDataAccessor;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.core.BlockPos;
@@ -24,6 +21,8 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.joml.*;
 
 import java.lang.Math;
+import java.util.Collection;
+import java.util.HashMap;
 
 import static com.glucose.aerowarpdrive.AeronauticsWarpDrive.WARP_DRIVE_BLOCK_ENTITY;
 import static com.glucose.aerowarpdrive.core.WarpDriveStates.*;
@@ -60,21 +59,34 @@ public class WarpDriveBlockEntity extends BlockEntity implements BlockEntitySubL
             totalMass += ((ServerSubLevel) subLevel).getMassTracker().getMass();
         }
         double energyCost = totalMass * distance;
-        int ticks = (int) (distance / 50);
+        int ticks = Math.max((int) (distance / 50), 200);
         this.chargingTicksRemaining = ticks;
         this.consumptionPerCharge = (int) (energyCost / ticks);
-        this.cooldownTicksRemaining = (int) (distance / 20);
+        this.cooldownTicksRemaining = (int) (ticks * 2.5);
         getLevel().setBlock(getBlockPos(), getBlockState().setValue(WarpDriveBlock.STATUS, READY), WarpDriveBlock.UPDATE_CLIENTS);
         this.statusMessage = "Ready to charge.\nWarp Cost: " + (int) energyCost + " FE.\nPower to begin charging";
     }
 
     private void teleportSubLevel(ServerSubLevel subLevel) {
-        Vec3 position = (target.getBottomCenter()).add(0, (subLevel.boundingBox().size().y / 2) + 1, 0);
-        SubLevelContainer.getContainer(subLevel.getLevel()).physicsSystem().getPipeline().teleport(
-                subLevel,
-                new Vector3d(position.x, position.y, position.z),
-                subLevel.logicalPose().orientation()
-        );
+        Collection<SubLevel> attachedSublevels = SubLevelHelper.getConnectedChain(subLevel);
+        HashMap<ServerSubLevel, Vector3d> subLevelOffsets = new HashMap<>();
+
+        Vector3d startRootPos = new Vector3d(subLevel.logicalPose().position());
+        for (SubLevel subLevel2 : attachedSublevels) {
+            subLevelOffsets.put((ServerSubLevel) subLevel2, subLevel2.logicalPose().position().sub(startRootPos));
+        }
+
+        Vec3 targetPos = target.getCenter().add(0,(subLevel.boundingBox().size().y / 2) + 1,0);
+        Vector3d targetPos3d = new Vector3d(targetPos.x, targetPos.y, targetPos.z);
+
+        PhysicsPipeline pipeline = SubLevelContainer.getContainer(subLevel.getLevel()).physicsSystem().getPipeline();
+        for (ServerSubLevel other : subLevelOffsets.keySet()) {
+            pipeline.teleport(
+                    other,
+                    subLevelOffsets.get(other).add(targetPos3d),
+                    other.logicalPose().orientation()
+            );
+        }
     }
 
     @Override
