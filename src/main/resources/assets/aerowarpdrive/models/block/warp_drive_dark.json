@@ -63,8 +63,8 @@
 			"from": [5, 5, 5],
 			"to": [11, 11, 11],
 			"neoforge_data": {
-				"block_light": 15,
-				"sky_light": 15
+				"block_light": 0,
+				"sky_light": 0
 			},
 			"rotation": {"angle": 0, "axis": "y", "origin": [8, 5, 8]},
 			"faces": {
