@@ -1,6 +1,7 @@
 package com.glucose.aerowarpdrive;
 
-import com.glucose.aerowarpdrive.gui.WarpDriveScreen;
+import com.glucose.aerowarpdrive.client.gui.WarpDriveScreen;
+import com.glucose.aerowarpdrive.client.render.WarpDriveBlockEntityRenderer;
 import com.glucose.aerowarpdrive.network.AnchorListPacket;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -9,10 +10,12 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import static com.glucose.aerowarpdrive.AeronauticsWarpDrive.ANCHORS_LIST_SEND_CHANNEL;
+import static com.glucose.aerowarpdrive.AeronauticsWarpDrive.WARP_DRIVE_BLOCK_ENTITY;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = AeronauticsWarpDrive.MODID, dist = Dist.CLIENT)
@@ -35,5 +38,13 @@ public class AeronauticsWarpDriveClient {
         // Some client setup code
         AeronauticsWarpDrive.LOGGER.info("HELLO FROM CLIENT SETUP");
         AeronauticsWarpDrive.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+    }
+
+    @SubscribeEvent
+    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(
+                WARP_DRIVE_BLOCK_ENTITY.get(),
+                WarpDriveBlockEntityRenderer::new
+        );
     }
 }

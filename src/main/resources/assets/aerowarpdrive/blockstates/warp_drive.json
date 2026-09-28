@@ -1,16 +1,7 @@
 {
   "variants": {
-    "status=waiting": {
-      "model": "aerowarpdrive:block/warp_drive_dark"
-    },
-    "status=ready": {
+    "": {
       "model": "aerowarpdrive:block/warp_drive"
-    },
-    "status=charging": {
-      "model": "aerowarpdrive:block/warp_drive"
-    },
-    "status=cooling": {
-      "model": "aerowarpdrive:block/warp_drive_cooling"
     }
   }
 }
