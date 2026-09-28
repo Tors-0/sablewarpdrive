@@ -4,6 +4,7 @@
   "string.aerowarpdrive.destinations": " Warp Destinations",
   "string.aerowarpdrive.error_sublevel_needed": "Place this on a sublevel first",
   "string.aerowarpdrive.error_sublevel_banned": "This cannot be placed on a sublevel",
+  "string.aerowarpdrive.status": "Status: ",
 
   "block.aerowarpdrive.warp_drive": "Warp Drive Core",
   "block.aerowarpdrive.warp_anchor": "Rift Anchor",
@@ -18,5 +19,7 @@
   "aerowarpdrive.configuration.items": "Item List",
   "aerowarpdrive.configuration.logDirtBlock": "Log Dirt Block",
   "aerowarpdrive.configuration.magicNumberIntroduction": "Magic Number Text",
-  "aerowarpdrive.configuration.magicNumber": "Magic Number"
+  "aerowarpdrive.configuration.magicNumber": "Magic Number",
+
+  "config.jade.plugin_aerowarpdrive.warp_drive_status": "Warp Drive Status"
 }

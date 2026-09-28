@@ -9,17 +9,16 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.Nameable;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.Objects;
-
 import static com.glucose.aerowarpdrive.AeronauticsWarpDrive.WARP_ANCHOR_BLOCK_ENTITY;
 
-public class WarpAnchorBlockEntity extends BlockEntity {
+public class WarpAnchorBlockEntity extends BlockEntity implements Nameable {
     private static String anchorNbtKey = "WarpAnchor";
 
     private WarpAnchor anchor;
@@ -72,5 +71,15 @@ public class WarpAnchorBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put(anchorNbtKey, WarpAnchor.write(anchor, new CompoundTag()));
+    }
+
+    @Override
+    public Component getName() {
+        return Component.literal(this.anchor.getName()).withStyle(Style.EMPTY.withItalic(true));
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return true;
     }
 }

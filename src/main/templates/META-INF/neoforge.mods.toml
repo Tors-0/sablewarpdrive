@@ -46,7 +46,7 @@ authors="Rachel Glucose (Tors-0)"
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Example mod description.
+A Neoforge mod for Minecraft 1.21.1 that adds warp drives and anchors to allow for teleporting of Sable sublevels
 '''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
@@ -90,7 +90,7 @@ Example mod description.
     modId="sable"
     type="required"
     versionRange="${sable_version_range}"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares

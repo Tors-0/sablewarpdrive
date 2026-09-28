@@ -50,7 +50,7 @@ repositories {
     }
 
 
-    // jade (dev only)
+    // jade (optional dep)
     maven { url = "https://api.modrinth.com/maven" }
 
 
@@ -153,7 +153,7 @@ dependencies {
     // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
 
     // Visit https://modrinth.com/mod/jade/versions?l=neoforge to get the latest version
-    localRuntime "maven.modrinth:jade:${project.jade_version}"
+    implementation "maven.modrinth:jade:${project.jade_version}"
 
     jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:[${project.sable_companion_version},)")) {
         version {
