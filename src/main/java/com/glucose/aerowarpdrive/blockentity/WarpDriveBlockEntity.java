@@ -13,6 +13,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -23,6 +25,7 @@ import org.joml.*;
 import java.lang.Math;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static com.glucose.aerowarpdrive.AeronauticsWarpDrive.WARP_DRIVE_BLOCK_ENTITY;
 import static com.glucose.aerowarpdrive.core.WarpDriveStates.*;
@@ -34,9 +37,13 @@ public class WarpDriveBlockEntity extends BlockEntity implements BlockEntitySubL
     private int cooldownTicksRemaining;
     private String statusMessage = "";
     private BlockPos target;
+    public int time;
+    public boolean animate;
 
     public WarpDriveBlockEntity(BlockPos pos, BlockState blockState) {
         super(WARP_DRIVE_BLOCK_ENTITY.get(), pos, blockState);
+        time = (int) (Math.random() * 100000);
+        animate = true;
     }
 
     private EnergyStorage createEnergyStorage() {
@@ -61,26 +68,41 @@ public class WarpDriveBlockEntity extends BlockEntity implements BlockEntitySubL
         double energyCost = totalMass * distance;
         int ticks = Math.max((int) (distance / 50), 200);
         this.chargingTicksRemaining = ticks;
-        this.consumptionPerCharge = (int) (energyCost / ticks);
-        this.cooldownTicksRemaining = (int) (ticks * 2.5);
+        this.consumptionPerCharge = (int) Math.ceil(energyCost / ticks);
+        this.cooldownTicksRemaining = 0;
         getLevel().setBlock(getBlockPos(), getBlockState().setValue(WarpDriveBlock.STATUS, READY), WarpDriveBlock.UPDATE_CLIENTS);
-        this.statusMessage = "Ready to charge.\nWarp Cost: " + (int) energyCost + " FE.\nPower to begin charging";
+        this.statusMessage = "Ready to charge.\nWarp Cost: " + (int) (energyCost + ticks) + " FE.\nPower to begin charging";
     }
 
     private void teleportSubLevel(ServerSubLevel subLevel) {
         Collection<SubLevel> attachedSublevels = SubLevelHelper.getConnectedChain(subLevel);
         HashMap<ServerSubLevel, Vector3d> subLevelOffsets = new HashMap<>();
+        HashMap<Player, Vec3> playerOffsets = new HashMap<>();
 
         Vector3d startRootPos = new Vector3d(subLevel.logicalPose().position());
         for (SubLevel subLevel2 : attachedSublevels) {
             subLevelOffsets.put((ServerSubLevel) subLevel2, subLevel2.logicalPose().position().sub(startRootPos));
         }
+        for (UUID uuid : subLevel.getTrackingPlayers()) {
+            Player player =  subLevel.getLevel().getPlayerByUUID(uuid);
+            playerOffsets.put(player, player.position().subtract(startRootPos.x, startRootPos.y, startRootPos.z));
+        }
 
         Vec3 targetPos = target.getCenter().add(0,(subLevel.boundingBox().size().y / 2) + 1,0);
         Vector3d targetPos3d = new Vector3d(targetPos.x, targetPos.y, targetPos.z);
 
+        // todo this code is useless unless we can suppress player velocity from sable
+//        for (Player player : playerOffsets.keySet()) {
+//            Vec3 offset = playerOffsets.get(player);
+//            player.teleportTo(
+//                    targetPos.x + offset.x,
+//                    targetPos.y + offset.y,
+//                    targetPos.z + offset.z
+//            );
+//        }
         PhysicsPipeline pipeline = SubLevelContainer.getContainer(subLevel.getLevel()).physicsSystem().getPipeline();
         for (ServerSubLevel other : subLevelOffsets.keySet()) {
+            pipeline.resetVelocity(other);
             pipeline.teleport(
                     other,
                     subLevelOffsets.get(other).add(targetPos3d),
@@ -89,12 +111,29 @@ public class WarpDriveBlockEntity extends BlockEntity implements BlockEntitySubL
         }
     }
 
+    public int getCooldownTicksRemaining() {
+        return cooldownTicksRemaining;
+    }
+
+    public static void tick(Level level, BlockPos pos, BlockState state, WarpDriveBlockEntity blockEntity) {
+        switch (state.getValue(WarpDriveBlock.STATUS)) {
+            case CHARGING -> blockEntity.cooldownTicksRemaining+=2;
+            case COOLING -> blockEntity.cooldownTicksRemaining--;
+            default -> blockEntity.cooldownTicksRemaining = 0;
+        }
+        if (Sable.HELPER.isInPlotGrid(level, pos)) {
+            ++blockEntity.time;
+            blockEntity.animate = true;
+        } else
+            blockEntity.animate = false;
+    }
+
     @Override
     public void sable$tick(ServerSubLevel subLevel) {
         switch (getBlockState().getValue(WarpDriveBlock.STATUS)) {
             case READY -> {
                 // destination selected, consuming power
-                if (getLevel().getDirectSignalTo(getBlockPos()) > 0) {
+                if (getLevel().hasNeighborSignal(getBlockPos())) {
                     // start charging
                     this.statusMessage = "Charging at " + consumptionPerCharge + " FE/t";
                     getLevel().setBlock(getBlockPos(), getBlockState().setValue(WarpDriveBlock.STATUS, CHARGING), WarpDriveBlock.UPDATE_CLIENTS);
@@ -114,10 +153,10 @@ public class WarpDriveBlockEntity extends BlockEntity implements BlockEntitySubL
                         this.chargingTicksRemaining = 0;
                         this.consumptionPerCharge = 0;
                         level.setBlock(getBlockPos(), getBlockState().setValue(WarpDriveBlock.STATUS, COOLING), WarpDriveBlock.UPDATE_CLIENTS);
-                        this.cooldownTicksRemaining = 600;
                         this.statusMessage = "Charge failed, cooling down";
                     } else {
                         this.chargingTicksRemaining--;
+                        this.cooldownTicksRemaining += 2;
                     }
                 }
             }

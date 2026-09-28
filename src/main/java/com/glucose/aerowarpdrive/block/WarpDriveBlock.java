@@ -18,6 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -31,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.glucose.aerowarpdrive.AeronauticsWarpDrive.WARP_DRIVE_BLOCK_ENTITY;
 
 public class WarpDriveBlock extends Block implements EntityBlock {
     public static final Component errorMessage = Component.translatable("string.aerowarpdrive.error_sublevel_needed");
@@ -54,6 +58,24 @@ public class WarpDriveBlock extends Block implements EntityBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState();
+    }
+
+    // We use a second method here due to generic conversions
+    // If extending `BaseEntityBlock`, this method is also available there as a protected static method
+    private static <E extends BlockEntity, A extends BlockEntity> @Nullable BlockEntityTicker<A> createTickerHelper(
+            BlockEntityType<A> type, BlockEntityType<E> checkedType, BlockEntityTicker<? super E> ticker
+    ) {
+        return checkedType == type ? (BlockEntityTicker<A>) ticker : null;
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        // You can return different tickers here, depending on whatever factors you want. A common use case would be
+        // to return different tickers on the client or server, only tick one side to begin with,
+        // or only return a ticker for some blockstates (e.g. when using a "my machine is working" blockstate property).
+        if (!(level instanceof ServerLevel))
+            return createTickerHelper(type, WARP_DRIVE_BLOCK_ENTITY.get(), WarpDriveBlockEntity::tick);
+        else return null;
     }
 
     @Override
