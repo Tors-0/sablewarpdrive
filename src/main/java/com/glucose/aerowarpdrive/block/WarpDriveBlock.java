@@ -81,13 +81,15 @@ public class WarpDriveBlock extends Block implements EntityBlock {
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
+
+    public static final VoxelShape blockShape = Shapes.join(
+            Shapes.box(0,0,0,1,0.125,1),
+            Shapes.box(0.0625,0.125,0.0625,0.9375,1,0.9375),
+            BooleanOp.OR
+    );
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.join(
-                Shapes.box(0,0,0,1,0.125,1),
-                Shapes.box(0.0625,0.125,0.0625,0.9375,1,0.9375),
-                BooleanOp.OR
-        );
+        return blockShape;
     }
 
     @Nullable
