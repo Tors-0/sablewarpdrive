@@ -55,12 +55,12 @@ public class WarpDriveBlockEntityRenderer implements BlockEntityRenderer<WarpDri
 
         poseStack.mulPose(Axis.YP.rotationDegrees(f1));
         poseStack.mulPose((new Quaternionf()).setAngleAxis(1.0471976F, SIN_45, 0.0F, SIN_45));
-        this.glass.render(poseStack, vertexconsumer, packedLight, i);
+        this.glass.render(poseStack, vertexconsumer, tempLight, i);
         float f2 = 0.875F;
         poseStack.scale(0.875F, 0.875F, 0.875F);
         poseStack.mulPose((new Quaternionf()).setAngleAxis(1.0471976F, SIN_45, 0.0F, SIN_45));
         poseStack.mulPose(Axis.YP.rotationDegrees(f1));
-        this.glass.render(poseStack, vertexconsumer, packedLight, i);
+        this.glass.render(poseStack, vertexconsumer, tempLight, i);
         poseStack.scale(0.875F, 0.875F, 0.875F);
         poseStack.mulPose((new Quaternionf()).setAngleAxis(1.0471976F, SIN_45, 0.0F, SIN_45));
         poseStack.mulPose(Axis.YP.rotationDegrees(f1));
