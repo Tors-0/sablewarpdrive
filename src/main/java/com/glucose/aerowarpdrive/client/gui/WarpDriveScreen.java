@@ -1,4 +1,4 @@
-package com.glucose.aerowarpdrive.gui;
+package com.glucose.aerowarpdrive.client.gui;
 
 import com.glucose.aerowarpdrive.AeronauticsWarpDrive;
 import com.glucose.aerowarpdrive.core.WarpAnchor;
@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
