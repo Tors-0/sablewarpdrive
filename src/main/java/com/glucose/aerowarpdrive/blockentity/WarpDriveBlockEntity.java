@@ -1,5 +1,6 @@
 package com.glucose.aerowarpdrive.blockentity;
 
+import com.glucose.aerowarpdrive.AeronauticsWarpDrive;
 import com.glucose.aerowarpdrive.block.WarpDriveBlock;
 import com.glucose.aerowarpdrive.core.WarpAnchor;
 import dev.ryanhcode.sable.Sable;
@@ -7,12 +8,15 @@ import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.api.physics.PhysicsPipeline;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.math.BoundingBox3d;
+import dev.ryanhcode.sable.companion.math.Pose3d;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.TickTask;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -83,23 +87,10 @@ public class WarpDriveBlockEntity extends BlockEntity implements BlockEntitySubL
         for (SubLevel subLevel2 : attachedSublevels) {
             subLevelOffsets.put((ServerSubLevel) subLevel2, subLevel2.logicalPose().position().sub(startRootPos));
         }
-        for (UUID uuid : subLevel.getTrackingPlayers()) {
-            Player player =  subLevel.getLevel().getPlayerByUUID(uuid);
-            playerOffsets.put(player, player.position().subtract(startRootPos.x, startRootPos.y, startRootPos.z));
-        }
 
         Vec3 targetPos = target.getCenter().add(0,(subLevel.boundingBox().size().y / 2) + 1,0);
         Vector3d targetPos3d = new Vector3d(targetPos.x, targetPos.y, targetPos.z);
 
-        // todo this code is useless unless we can suppress player velocity from sable
-//        for (Player player : playerOffsets.keySet()) {
-//            Vec3 offset = playerOffsets.get(player);
-//            player.teleportTo(
-//                    targetPos.x + offset.x,
-//                    targetPos.y + offset.y,
-//                    targetPos.z + offset.z
-//            );
-//        }
         PhysicsPipeline pipeline = SubLevelContainer.getContainer(subLevel.getLevel()).physicsSystem().getPipeline();
         for (ServerSubLevel other : subLevelOffsets.keySet()) {
             pipeline.resetVelocity(other);
@@ -108,6 +99,26 @@ public class WarpDriveBlockEntity extends BlockEntity implements BlockEntitySubL
                     subLevelOffsets.get(other).add(targetPos3d),
                     other.logicalPose().orientation()
             );
+        }
+
+        if (startRootPos.distance(targetPos3d) > 100 || true) {
+            for (UUID uuid : subLevel.getTrackingPlayers()) {
+                Player player =  subLevel.getLevel().getPlayerByUUID(uuid);
+                playerOffsets.put(player, player.position().subtract(startRootPos.x, startRootPos.y, startRootPos.z));
+            }
+
+            for (Player player : playerOffsets.keySet()) {
+                Vec3 offset = playerOffsets.get(player).add(targetPos);
+                player.setPos(offset.x, offset.y, offset.z);
+                player.setDeltaMovement(Vec3.ZERO);
+                AeronauticsWarpDrive.LOGGER.info("sent player to {} {} {}", offset.x, offset.y, offset.z);
+
+                // ensure the player actually gets to the destination
+                player.getServer().tell(new TickTask(1, () -> {
+                    player.setPos(offset.x, offset.y, offset.z);
+                    player.setDeltaMovement(Vec3.ZERO);
+                }));
+            }
         }
     }
 

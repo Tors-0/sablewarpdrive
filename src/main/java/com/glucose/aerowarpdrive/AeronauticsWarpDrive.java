@@ -147,7 +147,7 @@ public class AeronauticsWarpDrive {
             if (entity instanceof WarpDriveBlockEntity warpDrive) {
                 warpDrive.beginCharge(anchor);
             }
-            System.out.println(anchor.getName());
+            LOGGER.info("Warp teleporting player {} to rift anchor {}", access.player().getName(), anchor.getName());
         }));
 
         // Register ourselves for server and other game events we are interested in.
