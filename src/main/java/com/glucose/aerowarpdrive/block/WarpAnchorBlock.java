@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import static com.glucose.aerowarpdrive.AeronauticsWarpDrive.WARP_ANCHOR;
 
 public class WarpAnchorBlock extends Block implements EntityBlock, BlockSubLevelAssemblyListener {
-    public static final Component errorMessage = Component.translatable("string.aerowarpdrive.error_sublevel_banned");
+    public static final Component errorMessage = Component.translatable("message.aerowarpdrive.error_sublevel_banned");
 
     public static final Property<Boolean> ACTIVATED = BooleanProperty.create("activated");
 

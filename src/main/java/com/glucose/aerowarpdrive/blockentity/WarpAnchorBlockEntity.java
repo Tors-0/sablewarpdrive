@@ -37,6 +37,7 @@ public class WarpAnchorBlockEntity extends BlockEntity implements Nameable {
         if (this.isActivated()) return;
         if (getLevel() instanceof ServerLevel dimension) {
             SavedAnchorsDataStore store = SavedAnchorsDataStore.getDimensionAnchorStore(dimension);
+            this.anchor = new WarpAnchor(this.getBlockPos(), this.anchor.getName(), this.anchor.getUId());
             store.addAnchor(this.anchor);
         }
         getLevel().setBlock(getBlockPos(), getBlockState().setValue(WarpAnchorBlock.ACTIVATED, true), WarpAnchorBlock.UPDATE_CLIENTS);

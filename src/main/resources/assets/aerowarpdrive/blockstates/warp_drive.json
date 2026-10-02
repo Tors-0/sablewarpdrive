@@ -1,7 +1,20 @@
+
 {
   "variants": {
-    "": {
+    "facing=east": {
+      "model": "aerowarpdrive:block/warp_drive",
+      "y": 90
+    },
+    "facing=north": {
       "model": "aerowarpdrive:block/warp_drive"
+    },
+    "facing=south": {
+      "model": "aerowarpdrive:block/warp_drive",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "aerowarpdrive:block/warp_drive",
+      "y": 270
     }
   }
 }

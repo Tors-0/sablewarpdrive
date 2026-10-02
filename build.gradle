@@ -50,7 +50,7 @@ repositories {
     }
 
 
-    // jade (optional dep)
+    // jade (optional dep) + fusion
     maven { url = "https://api.modrinth.com/maven" }
 
 
@@ -154,6 +154,9 @@ dependencies {
 
     // Visit https://modrinth.com/mod/jade/versions?l=neoforge to get the latest version
     implementation "maven.modrinth:jade:${project.jade_version}"
+
+    // Fusion
+    implementation "maven.modrinth:fusion-connected-textures:${project.fusion_version}-neoforge-mc${project.minecraft_version}"
 
     jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:[${project.sable_companion_version},)")) {
         version {

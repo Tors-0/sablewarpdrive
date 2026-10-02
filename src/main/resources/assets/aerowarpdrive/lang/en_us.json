@@ -2,14 +2,18 @@
   "itemGroup.aerowarpdrive": "Sable: Warp Drive",
 
   "string.aerowarpdrive.destinations": " Warp Destinations",
-  "string.aerowarpdrive.error_sublevel_needed": "Place this on a sublevel first",
-  "string.aerowarpdrive.error_sublevel_banned": "This cannot be placed on a sublevel",
   "string.aerowarpdrive.status": "Status: ",
 
+  "message.aerowarpdrive.warp_drive.missing_core": "Missing Stabilizer Blocks",
+  "message.aerowarpdrive.error_sublevel_needed": "Place this on a sublevel first",
+  "message.aerowarpdrive.error_sublevel_banned": "This cannot be placed on a sublevel",
+
   "block.aerowarpdrive.warp_drive": "Warp Drive Core",
+  "block.aerowarpdrive.drive_core": "Warp Drive Stabilizer",
   "block.aerowarpdrive.warp_anchor": "Rift Anchor",
 
   "item.aerowarpdrive.warp_drive": "Warp Drive Core",
+  "item.aerowarpdrive.drive_core": "Warp Drive Stabilizer",
   "item.aerowarpdrive.warp_anchor": "Rift Anchor",
   "item.aerowarpdrive.untethered_fruit": "Untethered Fruit",
 

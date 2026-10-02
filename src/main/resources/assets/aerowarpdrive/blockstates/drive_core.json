@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "core_used=true": {
+      "model": "aerowarpdrive:block/drive_core"
+    },
+    "core_used=false": {
+      "model": "aerowarpdrive:block/drive_core_inactive"
+    }
+  }
+}

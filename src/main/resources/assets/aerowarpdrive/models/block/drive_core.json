@@ -1,0 +1,17 @@
+{
+  "loader": "fusion:model",
+  "type": "connecting",
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "aerowarpdrive:block/drive_core"
+  },
+  "connections": [
+    {
+      "type": "is_same_state"
+    },
+    {
+      "type": "match_block",
+      "block": "aerowarpdrive:warp_drive"
+    }
+  ]
+}

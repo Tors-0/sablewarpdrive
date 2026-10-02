@@ -1,12 +1,15 @@
 package com.glucose.aerowarpdrive;
 
+import com.glucose.aerowarpdrive.block.DriveCoreBlock;
 import com.glucose.aerowarpdrive.block.WarpAnchorBlock;
 import com.glucose.aerowarpdrive.block.WarpDriveBlock;
+import com.glucose.aerowarpdrive.blockentity.DriveCoreBlockEntity;
 import com.glucose.aerowarpdrive.blockentity.WarpAnchorBlockEntity;
 import com.glucose.aerowarpdrive.blockentity.WarpDriveBlockEntity;
 import com.glucose.aerowarpdrive.core.WarpAnchor;
 import com.glucose.aerowarpdrive.network.AWDEndecs;
 import com.glucose.aerowarpdrive.network.AnchorListPacket;
+import com.glucose.aerowarpdrive.network.ParticlePacket;
 import com.glucose.aerowarpdrive.network.WarpDriveTargetPacket;
 import com.glucose.aerowarpdrive.store.SavedAnchorsDataStore;
 import io.wispforest.owo.network.OwoNetChannel;
@@ -68,17 +71,22 @@ public class AeronauticsWarpDrive {
     // Block
     public static final DeferredBlock<WarpDriveBlock> WARP_DRIVE = BLOCKS.register(
             "warp_drive",
-            () -> new WarpDriveBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).destroyTime(5f).noOcclusion())
+            () -> new WarpDriveBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).destroyTime(5f))
     );
     public static final DeferredBlock<WarpAnchorBlock> WARP_ANCHOR = BLOCKS.register(
             "warp_anchor",
             () -> new WarpAnchorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_MAGENTA).destroyTime(5f).noOcclusion())
+    );
+    public static final DeferredBlock<DriveCoreBlock> DRIVE_CORE = BLOCKS.register(
+            "drive_core",
+            () -> new DriveCoreBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).destroyTime(5f))
     );
 
 
     // BlockItem
     public static final DeferredItem<BlockItem> WARP_DRIVE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("warp_drive", WARP_DRIVE);
     public static final DeferredItem<BlockItem> WARP_ANCHOR_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("warp_anchor", WARP_ANCHOR);
+    public static final DeferredItem<BlockItem> DRIVE_CORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("drive_core", DRIVE_CORE);
 
 
     // Item
@@ -90,23 +98,32 @@ public class AeronauticsWarpDrive {
     public static final Supplier<BlockEntityType<WarpDriveBlockEntity>> WARP_DRIVE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "warp_drive_block_entity",
             () -> BlockEntityType.Builder.of(
-                    WarpDriveBlockEntity::new,
-                    WARP_DRIVE.get()
-            )
+                            WarpDriveBlockEntity::new,
+                            WARP_DRIVE.get()
+                    )
                     .build(null)
     );
     public static final Supplier<BlockEntityType<WarpAnchorBlockEntity>> WARP_ANCHOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "warp_anchor_block_entity",
             () -> BlockEntityType.Builder.of(
-                    WarpAnchorBlockEntity::new,
-                    WARP_ANCHOR.get()
-            )
+                            WarpAnchorBlockEntity::new,
+                            WARP_ANCHOR.get()
+                    )
+                    .build(null)
+    );
+    public static final Supplier<BlockEntityType<DriveCoreBlockEntity>> DRIVE_CORE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "drive_core_block_entity",
+            () -> BlockEntityType.Builder.of(
+                            DriveCoreBlockEntity::new,
+                            DRIVE_CORE.get()
+                    )
                     .build(null)
     );
 
 
-    public static final OwoNetChannel WARP_DRIVE_SELECT_CHANNEL = OwoNetChannel.create(ResourceLocation.fromNamespaceAndPath(MODID, "warp_drive_select"));
-    public static final OwoNetChannel ANCHORS_LIST_SEND_CHANNEL = OwoNetChannel.create(ResourceLocation.fromNamespaceAndPath(MODID, "anchors_list_send"));
+    public static final OwoNetChannel WARP_DRIVE_SELECT_CHANNEL = OwoNetChannel.create(id("warp_drive_select"));
+    public static final OwoNetChannel ANCHORS_LIST_SEND_CHANNEL = OwoNetChannel.create(id("anchors_list_send"));
+    public static final OwoNetChannel PARTICLES_CHANNEL = OwoNetChannel.create(id("complex_particle"));
 
 
     // Creates a creative tab with the id "aerowarpdrive:example_tab" for the example item, that is placed after the combat tab
@@ -118,6 +135,7 @@ public class AeronauticsWarpDrive {
                 output.accept(UNTETHERED_FRUIT.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
                 output.accept(WARP_ANCHOR_BLOCK_ITEM.get());
                 output.accept(WARP_DRIVE_BLOCK_ITEM.get());
+                output.accept(DRIVE_CORE_BLOCK_ITEM.get());
             }).build());
 
 
@@ -149,6 +167,7 @@ public class AeronauticsWarpDrive {
             }
             LOGGER.info("Warp teleporting player {} to rift anchor {}", access.player().getName(), anchor.getName());
         }));
+        PARTICLES_CHANNEL.registerClientboundDeferred(ParticlePacket.class);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (AeronauticsWarpDrive) to respond directly to events.
@@ -189,5 +208,9 @@ public class AeronauticsWarpDrive {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+    }
+
+    public static ResourceLocation id(String name) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, name);
     }
 }

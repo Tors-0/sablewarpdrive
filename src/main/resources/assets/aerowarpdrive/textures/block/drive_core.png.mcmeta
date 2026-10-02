@@ -1,0 +1,19 @@
+{
+  "fusion": {
+    "type": "connecting",
+    "layout": "pieced",
+    "connections": [
+      {
+        "type": "is_same_block"
+      },
+      {
+        "type": "match_block",
+        "block": "aerowarpdrive:warp_drive"
+      },
+      {
+        "type": "match_block",
+        "block": "aerowarpdrive:drive_core"
+      }
+    ]
+  }
+}

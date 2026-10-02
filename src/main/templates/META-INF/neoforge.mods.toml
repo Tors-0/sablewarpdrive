@@ -50,8 +50,8 @@ A Neoforge mod for Minecraft 1.21.1 that adds warp drives and anchors to allow f
 '''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
-#[[mixins]]
-#config="${mod_id}.mixins.json"
+[[mixins]]
+config="${mod_id}.mixins.json"
 
 # The [[accessTransformers]] block allows you to declare where your AT file is.
 # If this block is omitted, a fallback attempt will be made to load an AT from META-INF/accesstransformer.cfg
@@ -99,6 +99,13 @@ A Neoforge mod for Minecraft 1.21.1 that adds warp drives and anchors to allow f
     versionRange="${owo_version_range}"
     ordering="AFTER"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="fusion"
+type="required"
+versionRange="[1.0.0,)"
+ordering="NONE"
+side="CLIENT"
 
 [[dependencies.${mod_id}]]
     modId="jade"
